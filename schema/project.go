@@ -22,7 +22,7 @@ type Project struct {
 
 type ProjectListOptions struct {
 	Name     string
-	Public   int
+	Public   *bool
 	Owner    string
 	Page     string
 	PageSize string

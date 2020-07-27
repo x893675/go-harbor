@@ -7,26 +7,17 @@ import (
 	"net/url"
 )
 
-const (
-	listAll = iota
-	listPublic
-	listPrivate
-)
-
 func (cli *Client) ListProjects(ctx context.Context, options schema.ProjectListOptions) ([]schema.Project, error) {
 	var projects []schema.Project
 
 	query := url.Values{}
 
-	switch options.Public {
-	case listPublic:
-		query.Set("public", "1")
-	case listPrivate:
-		query.Set("public", "0")
-	case listAll:
-		fallthrough
-	default:
-		break
+	if options.Public != nil {
+		if *options.Public {
+			query.Set("public", "1")
+		} else {
+			query.Set("public", "0")
+		}
 	}
 
 	if v := options.Name; v != "" {
