@@ -19,7 +19,7 @@ func main() {
 	}
 	harborClient, err := goharbor.NewClientWithOpts(goharbor.WithHost(HarborAddress),
 		goharbor.WithHTTPClient(c),
-		goharbor.WithBasicAuth("admin", "thinkbig1!"))
+		goharbor.WithBasicAuth("admin", "Harbor12345"))
 	if err != nil {
 		panic(err)
 	}
