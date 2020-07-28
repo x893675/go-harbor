@@ -15,15 +15,14 @@ type Artifact struct {
 	ManifestMediaType string                          `json:"manifest_media_type"` // the media type of manifest/index
 	ProjectID         int64                           `json:"project_id"`
 	RepositoryID      int64                           `json:"repository_id"`
-	//RepositoryName    string                 `json:"repository_name"`
-	Digest        string                   `json:"digest"`
-	Size          int64                    `json:"size"`
-	PushTime      time.Time                `json:"push_time"`
-	PullTime      time.Time                `json:"pull_time"`
-	ExtraAttrs    map[string]interface{}   `json:"extra_attrs"` // only contains the simple attributes specific for the different artifact type, most of them should come from the config layer
-	Annotations   map[string]string        `json:"annotations"`
-	References    []*Reference             `json:"references"` // child artifacts referenced by the parent artifact if the artifact is an index
-	AdditionLinks map[string]*AdditionLink `json:"addition_links"`
+	Digest            string                          `json:"digest"`
+	Size              int64                           `json:"size"`
+	PushTime          time.Time                       `json:"push_time"`
+	PullTime          time.Time                       `json:"pull_time"`
+	ExtraAttrs        map[string]interface{}          `json:"extra_attrs"` // only contains the simple attributes specific for the different artifact type, most of them should come from the config layer
+	Annotations       map[string]string               `json:"annotations"`
+	References        []*Reference                    `json:"references"` // child artifacts referenced by the parent artifact if the artifact is an index
+	AdditionLinks     map[string]*AdditionLink        `json:"addition_links"`
 }
 
 // AdditionLink is a link via that the addition can be fetched
@@ -31,10 +30,6 @@ type AdditionLink struct {
 	HREF     string `json:"href"`
 	Absolute bool   `json:"absolute"` // specify the href is an absolute URL or not
 }
-
-//type ScanOverview struct {
-//	NativeReportSummary
-//}
 
 type Severity string
 
@@ -91,11 +86,11 @@ type Label struct {
 }
 
 type Reference struct {
-	ID          int64  `json:"id"`
-	ParentID    int64  `json:"parent_id"`
-	ChildID     int64  `json:"child_id"`
-	ChildDigest string `json:"child_digest"`
-	Platform    *v1.Platform
+	ID          int64             `json:"id"`
+	ParentID    int64             `json:"parent_id"`
+	ChildID     int64             `json:"child_id"`
+	ChildDigest string            `json:"child_digest"`
+	Platform    *v1.Platform      `json:"platform"`
 	URLs        []string          `json:"urls"`
 	Annotations map[string]string `json:"annotations"`
 }

@@ -7,12 +7,15 @@ import (
 	"github.com/x893675/goharbor/errdefs"
 	"github.com/x893675/goharbor/schema"
 	"net/url"
+	"strings"
 )
 
 func (cli *Client) ListArtifacts(ctx context.Context, options schema.ArtifactsListOptions) ([]schema.Artifact, error) {
 	if options.ProjectName == "" || options.RepositoryName == "" {
 		return nil, errdefs.InvalidParameter(fmt.Errorf("project name or repo name must valid"))
 	}
+
+	options.RepositoryName = strings.ReplaceAll(options.RepositoryName, "/", "%2F")
 
 	var artifacts []schema.Artifact
 

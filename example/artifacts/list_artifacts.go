@@ -7,7 +7,6 @@ import (
 	"github.com/x893675/goharbor/schema"
 	"log"
 	"net/http"
-	"strings"
 )
 
 const HarborAddress = "https://myharbor.com"
@@ -25,10 +24,9 @@ func main() {
 		panic(err)
 	}
 	withScan := true
-	Imagename := strings.ReplaceAll("hanamichi/hal9k", "/", "%2F")
 	pr, err := harborClient.ListArtifacts(context.TODO(), schema.ArtifactsListOptions{
 		ProjectName:      "test",
-		RepositoryName:   Imagename,
+		RepositoryName:   "alpine",
 		WithScanOverview: &withScan,
 	})
 	if err != nil {
