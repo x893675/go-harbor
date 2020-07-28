@@ -7,19 +7,19 @@ type causer interface {
 func getImplementer(err error) error {
 	switch e := err.(type) {
 	case
-			ErrNotFound,
-			ErrInvalidParameter,
-			ErrConflict,
-			ErrUnauthorized,
-			ErrUnavailable,
-			ErrForbidden,
-			ErrSystem,
-			ErrNotModified,
-			ErrNotImplemented,
-			ErrCancelled,
-			ErrDeadline,
-			ErrDataLoss,
-			ErrUnknown:
+		ErrNotFound,
+		ErrInvalidParameter,
+		ErrConflict,
+		ErrUnauthorized,
+		ErrUnavailable,
+		ErrForbidden,
+		ErrSystem,
+		ErrNotModified,
+		ErrNotImplemented,
+		ErrCancelled,
+		ErrDeadline,
+		ErrDataLoss,
+		ErrUnknown:
 		return err
 	case causer:
 		return getImplementer(e.Cause())

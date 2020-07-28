@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	Version = "v2.0"
+	Version           = "v2.0"
 	DefaultHarborHost = "http://localhost"
 )
 
