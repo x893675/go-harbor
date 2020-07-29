@@ -23,32 +23,35 @@ jobs:
         goarch:
           - amd64
 
-    - name: test (${{ matrix.os }}/go-${{ matrix.go_version }}/${{ matrix.goarch }})
-      runs-on: ${{ matrix.os }}-latest
-      steps:
-        - uses: actions/setup-go@v2.0.3
-          id: go
-          with:
-            stable: false
-            go-version: ${{ matrix.go_version }}
+    name: test (${{ matrix.os }}/go-${{ matrix.go_version }}/${{ matrix.goarch }})
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/setup-go@v2.0.3
+        id: go
+        with:
+          stable: false
+          go-version: ${{ matrix.go_version }}
 
-        - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.1
 
-        - run: go mod download
+      - run: go mod download
 
-        - name: unit test
-          env:
-            GOARCH: ${{ matrix.goarch }}
-            GOPROXY: off
-          run: |
-            bash ./go.test.sh
+      - run: make lint
+        env:
+          GOFLAGS: -mod=readonly
 
-        - name: Upload coverage to Codecov
-          uses: codecov/codecov-action@v1
-          with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-            file: ./coverage.txt
-            flags: unittests
-            env_vars: OS,GOLANG,CI
-            name: codecov-ci
-            fail_ci_if_error: true
+      - run: |
+          bash ./go.test.sh
+        env:
+          GOARCH: ${{ matrix.goarch }}
+          GOPROXY: off
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.txt
+          flags: unittests
+          env_vars: OS,GOLANG,CI
+          name: codecov-ci
+          fail_ci_if_error: true
