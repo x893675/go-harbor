@@ -16,5 +16,56 @@ For more details, check the [Harbor API](https://goharbor.io/docs/1.10/build-cus
 # Example
 
 ```go
+package main
 
+import (
+	"context"
+	"crypto/tls"
+	"github.com/x893675/go-harbor"
+	"github.com/x893675/go-harbor/schema"
+	"log"
+	"net/http"
+)
+
+const HarborAddress = "https://myharbor.com"
+
+func main() {
+	c := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+	harborClient, err := goharbor.NewClientWithOpts(goharbor.WithHost(HarborAddress),
+		goharbor.WithHTTPClient(c),
+		goharbor.WithBasicAuth("admin", "Harbor12345"))
+	if err != nil {
+		panic(err)
+	}
+	pr, err := harborClient.ListProjects(context.TODO(), schema.ProjectListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	for _, item := range pr {
+		log.Printf("%+v", item)
+
+	}
+}
 ```
+
+# Developing
+
+All development commands can be seen in the Makefile.
+
+Commited code must pass:
+
+* golangci-lint
+* go test
+
+Running make test will run all checks, as well as install any required dependencies.
+
+# TODO LIST
+
+- [ ] Projects API
+- [ ] Repos API
+- [ ] Artifacts API
+- [ ] Unit Tests
