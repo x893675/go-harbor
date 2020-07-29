@@ -1,0 +1,54 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 * * 4"
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        go_version:
+          - 1.13
+          - 1.14
+        os:
+          - macos
+          - ubuntu
+          - windows
+        goarch:
+          - amd64
+
+    - name: test (${{ matrix.os }}/go-${{ matrix.go_version }}/${{ matrix.goarch }})
+      runs-on: ${{ matrix.os }}-latest
+      steps:
+        - uses: actions/setup-go@v2.0.3
+          id: go
+          with:
+            stable: false
+            go-version: ${{ matrix.go_version }}
+
+        - uses: actions/checkout@v2.3.1
+
+        - run: go mod download
+
+        - name: unit test
+          env:
+            GOARCH: ${{ matrix.goarch }}
+            GOPROXY: off
+          run: |
+            bash ./go.test.sh
+
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v1
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            file: ./coverage.txt
+            flags: unittests
+            env_vars: OS,GOLANG,CI
+            name: codecov-ci
+            fail_ci_if_error: true
