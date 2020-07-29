@@ -36,10 +36,6 @@ jobs:
 
       - run: go mod download
 
-      - run: make lint
-        env:
-          GOFLAGS: -mod=readonly
-
       - run: |
           bash ./go.test.sh
         env:
