@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"github.com/x893675/goharbor"
-	"github.com/x893675/goharbor/schema"
+	"github.com/x893675/go-harbor"
+	"github.com/x893675/go-harbor/schema"
 	"log"
 	"net/http"
 )

@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/x893675/goharbor/errdefs"
+	"github.com/x893675/go-harbor/errdefs"
 	"io"
 	"io/ioutil"
 	"net/http"

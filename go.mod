@@ -1,4 +1,4 @@
-module github.com/x893675/goharbor
+module github.com/x893675/go-harbor
 
 go 1.14
 

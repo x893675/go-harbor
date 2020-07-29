@@ -3,7 +3,7 @@ package goharbor
 import (
 	"context"
 	"encoding/json"
-	"github.com/x893675/goharbor/schema"
+	"github.com/x893675/go-harbor/schema"
 	"net/http"
 	"testing"
 )

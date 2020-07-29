@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/x893675/goharbor/errdefs"
-	"github.com/x893675/goharbor/schema"
+	"github.com/x893675/go-harbor/errdefs"
+	"github.com/x893675/go-harbor/schema"
 	"net/http"
 	"net/url"
 )
