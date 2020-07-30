@@ -51,3 +51,14 @@ func (cli *Client) CreateProject(ctx context.Context, body schema.CreateProjectO
 	defer ensureReaderClosed(serverResp)
 	return err
 }
+
+func (cli *Client) ProjectExist(ctx context.Context, name string) (bool, error) {
+	query := url.Values{}
+	query.Set("project_name", name)
+	serverResp, err := cli.head(ctx, "/projects", query, nil)
+	defer ensureReaderClosed(serverResp)
+	if err != nil {
+		return false, wrapResponseError(err, serverResp, "projects", name)
+	}
+	return true, nil
+}

@@ -24,6 +24,11 @@ type serverResponse struct {
 	reqURL     *url.URL
 }
 
+// head sends an http request to the docker API using the method HEAD.
+func (cli *Client) head(ctx context.Context, path string, query url.Values, headers map[string][]string) (serverResponse, error) {
+	return cli.sendRequest(ctx, "HEAD", path, query, nil, headers)
+}
+
 // get sends an http request to the docker API using the method GET with a specific Go context.
 func (cli *Client) get(ctx context.Context, path string, query url.Values, headers map[string][]string) (serverResponse, error) {
 	return cli.sendRequest(ctx, "GET", path, query, nil, headers)
@@ -172,4 +177,28 @@ func encodeData(data interface{}) (*bytes.Buffer, error) {
 		}
 	}
 	return params, nil
+}
+
+func wrapResponseError(err error, resp serverResponse, object, name string) error {
+	switch {
+	case err == nil:
+		return nil
+	case resp.statusCode == http.StatusNotFound:
+		return objectNotFoundError{object: object, name: name}
+	case resp.statusCode == http.StatusInternalServerError:
+		return errdefs.System(err)
+	default:
+		return err
+	}
+}
+
+type objectNotFoundError struct {
+	object string
+	name   string
+}
+
+func (e objectNotFoundError) NotFound() {}
+
+func (e objectNotFoundError) Error() string {
+	return fmt.Sprintf("Error: No such %s: %s", e.object, e.name)
 }
