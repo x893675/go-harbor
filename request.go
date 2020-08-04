@@ -43,6 +43,29 @@ func (cli *Client) post(ctx context.Context, path string, query url.Values, obj 
 	return cli.sendRequest(ctx, "POST", path, query, body, headers)
 }
 
+func (cli *Client) postRaw(ctx context.Context, path string, query url.Values, body io.Reader, headers map[string][]string) (serverResponse, error) {
+	return cli.sendRequest(ctx, "POST", path, query, body, headers)
+}
+
+// put sends an http request to the docker API using the method PUT.
+func (cli *Client) put(ctx context.Context, path string, query url.Values, obj interface{}, headers map[string][]string) (serverResponse, error) {
+	body, headers, err := encodeBody(obj, headers)
+	if err != nil {
+		return serverResponse{}, err
+	}
+	return cli.sendRequest(ctx, "PUT", path, query, body, headers)
+}
+
+// putRaw sends an http request to the docker API using the method PUT.
+func (cli *Client) putRaw(ctx context.Context, path string, query url.Values, body io.Reader, headers map[string][]string) (serverResponse, error) {
+	return cli.sendRequest(ctx, "PUT", path, query, body, headers)
+}
+
+// delete sends an http request to the docker API using the method DELETE.
+func (cli *Client) delete(ctx context.Context, path string, query url.Values, headers map[string][]string) (serverResponse, error) {
+	return cli.sendRequest(ctx, "DELETE", path, query, nil, headers)
+}
+
 func (cli *Client) sendRequest(ctx context.Context, method, path string, query url.Values, body io.Reader, headers headers) (serverResponse, error) {
 	req, err := cli.buildRequest(method, cli.getAPIPath(ctx, path, query), body, headers)
 	if err != nil {

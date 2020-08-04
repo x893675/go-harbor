@@ -3,6 +3,8 @@ package goharbor
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/x893675/go-harbor/errdefs"
 	"github.com/x893675/go-harbor/schema"
 	"net/url"
 )
@@ -61,4 +63,22 @@ func (cli *Client) ProjectExist(ctx context.Context, name string) (bool, error) 
 		return false, wrapResponseError(err, serverResp, "projects", name)
 	}
 	return true, nil
+}
+
+func (cli *Client) ListProjectWebhookJobs(ctx context.Context, options schema.WebHookJobsListOptions) ([]schema.WebHookJob, error) {
+	if options.ProjectID == "" || options.PolicyID == "" {
+		return nil, errdefs.InvalidParameter(fmt.Errorf("project id and policy id must valid"))
+	}
+
+	query := url.Values{}
+	query.Set("policy_id", options.PolicyID)
+
+	var jobs []schema.WebHookJob
+	serverResp, err := cli.get(ctx, fmt.Sprintf("/projects/%s/webhook/jobs", options.ProjectID), query, nil)
+	defer ensureReaderClosed(serverResp)
+	if err != nil {
+		return jobs, err
+	}
+	err = json.NewDecoder(serverResp.body).Decode(&jobs)
+	return jobs, err
 }

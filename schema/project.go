@@ -28,14 +28,6 @@ type ProjectListOptions struct {
 	PageSize string
 }
 
-//type CreateProjectOptions struct {
-//	Name         string            `json:"project_name"`
-//	Metadata     map[string]string `json:"metadata"`
-//	CVEAllowlist CVEAllowlist      `json:"cve_allowlist"`
-//	StorageLimit *int64            `json:"storage_limit,omitempty"`
-//	RegistryID   int64             `json:"registry_id"`
-//}
-
 type CreateProjectOptions struct {
 	Name         string           `json:"project_name"`
 	Metadata     *ProjectMetadata `json:"metadata,omitempty"`
@@ -57,4 +49,22 @@ type ProjectMetadata struct {
 	Public string `json:"public,omitempty"`
 	// Whether prevent the vulnerable images from running. The valid values are "true", "false".
 	PreventVul string `json:"prevent_vul,omitempty"`
+}
+
+type WebHookJobsListOptions struct {
+	// Relevant project ID, required
+	ProjectID string
+	// the policy ID
+	PolicyID string
+}
+
+type WebHookJob struct {
+	Status     string `json:"status,omitempty"`
+	UpdateTime string `json:"update_time,omitempty"`
+	EventType  string `json:"event_type,omitempty"`
+	CreateTime string `json:"creation_time,omitempty"`
+	JobDetail  string `json:"job_detail,omitempty"`
+	ID         int64  `json:"id,omitempty"`
+	NotifyType string `json:"notify_type,omitempty"`
+	PolicyID   int64  `json:"policy_id,omitempty"`
 }
