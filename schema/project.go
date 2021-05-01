@@ -68,3 +68,18 @@ type WebHookJob struct {
 	NotifyType string `json:"notify_type,omitempty"`
 	PolicyID   int64  `json:"policy_id,omitempty"`
 }
+
+type ProjectMemberListOptions struct {
+	ProjectID  int64
+	EntityName string
+}
+
+type ProjectMemberEntity struct {
+	ID         int64  `json:"id,omitempty"`
+	ProjectID  int64  `json:"project_id,omitempty"`
+	EntityName string `json:"entity_name,omitempty"`
+	RoleName   string `json:"role_name,omitempty"`
+	RoleID     int64  `json:"role_id,omitempty"`
+	EntityID   int64  `json:"entity_id,omitempty"`
+	EntityType string `json:"entity_type,omitempty"`
+}

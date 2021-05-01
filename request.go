@@ -90,7 +90,7 @@ func (cli *Client) buildRequest(method, path string, body io.Reader, headers hea
 		return nil, err
 	}
 	req.SetBasicAuth(cli.basicAuth.Username, cli.basicAuth.Password)
-	//req = cli.addHeaders(req, headers)
+	req = cli.addHeaders(req, headers)
 
 	req.URL.Host = cli.host
 	req.URL.Scheme = cli.scheme

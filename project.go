@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
+
 	"github.com/x893675/go-harbor/errdefs"
 	"github.com/x893675/go-harbor/schema"
-	"net/url"
 )
 
 func (cli *Client) ListProjects(ctx context.Context, options schema.ProjectListOptions) ([]schema.Project, error) {
@@ -49,7 +50,7 @@ func (cli *Client) ListProjects(ctx context.Context, options schema.ProjectListO
 }
 
 func (cli *Client) CreateProject(ctx context.Context, body schema.CreateProjectOptions) error {
-	serverResp, err := cli.post(ctx, "/projects", nil, body, nil)
+	serverResp, err := cli.post(ctx, "/projects", nil, body, JSONContentTypeHeader)
 	defer ensureReaderClosed(serverResp)
 	return err
 }
@@ -60,7 +61,11 @@ func (cli *Client) ProjectExist(ctx context.Context, name string) (bool, error) 
 	serverResp, err := cli.head(ctx, "/projects", query, nil)
 	defer ensureReaderClosed(serverResp)
 	if err != nil {
-		return false, wrapResponseError(err, serverResp, "projects", name)
+		if errdefs.IsNotFound(err) {
+			return false, nil
+		} else {
+			return false, wrapResponseError(err, serverResp, "projects", name)
+		}
 	}
 	return true, nil
 }
@@ -81,4 +86,64 @@ func (cli *Client) ListProjectWebhookJobs(ctx context.Context, options schema.We
 	}
 	err = json.NewDecoder(serverResp.body).Decode(&jobs)
 	return jobs, err
+}
+
+func (cli *Client) GetProject(ctx context.Context, projectNameOrID string) (*schema.Project, error) {
+	project := &schema.Project{}
+	query := url.Values{}
+	serverResp, err := cli.get(ctx, fmt.Sprintf("/projects/%s", projectNameOrID), query, JSONContentTypeHeader)
+	defer ensureReaderClosed(serverResp)
+	if err != nil {
+		return project, err
+	}
+	err = json.NewDecoder(serverResp.body).Decode(project)
+	return project, err
+}
+
+func (cli *Client) DeleteProject(ctx context.Context, projectNameOrID string) error {
+	serverResp, err := cli.delete(ctx, fmt.Sprintf("/projects/%s", projectNameOrID), nil, nil)
+	defer ensureReaderClosed(serverResp)
+	return err
+}
+
+func (cli *Client) ListProjectMembers(ctx context.Context, options *schema.ProjectMemberListOptions) ([]schema.ProjectMemberEntity, error) {
+	var projectMembers []schema.ProjectMemberEntity
+	if options == nil || options.ProjectID == 0 {
+		return projectMembers, errdefs.Unavailable(fmt.Errorf("project id required"))
+	}
+	query := url.Values{}
+	if v := options.EntityName; v != "" {
+		query.Set("entityname", v)
+	}
+	serverResp, err := cli.get(ctx, fmt.Sprintf("/projects/%d/members", options.ProjectID), query, nil)
+	defer ensureReaderClosed(serverResp)
+	if err != nil {
+		return projectMembers, err
+	}
+	err = json.NewDecoder(serverResp.body).Decode(&projectMembers)
+	return projectMembers, err
+}
+
+func (cli *Client) CheckProjectMemberExist(ctx context.Context, projectID int64, username string) (bool, error) {
+
+	result, err := cli.ListProjectMembers(ctx, &schema.ProjectMemberListOptions{
+		ProjectID:  projectID,
+		EntityName: username,
+	})
+	if err != nil || len(result) == 0 {
+		return false, err
+	}
+	return true, nil
+}
+
+func (cli *Client) AddProjectMember(ctx context.Context, projectID int64, member schema.ProjectMember) error {
+	serverResp, err := cli.post(ctx, fmt.Sprintf("/projects/%d/members", projectID), nil, member, JSONContentTypeHeader)
+	defer ensureReaderClosed(serverResp)
+	return err
+}
+
+func (cli *Client) RemoveProjectMember(ctx context.Context, projectID int64, memberID int64) error {
+	serverResp, err := cli.delete(ctx, fmt.Sprintf("/projects/%d/members/%d", projectID, memberID), nil, nil)
+	defer ensureReaderClosed(serverResp)
+	return err
 }

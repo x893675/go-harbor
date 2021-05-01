@@ -12,6 +12,12 @@ const (
 	DefaultHarborHost = "http://localhost"
 )
 
+var (
+	JSONContentTypeHeader = map[string][]string{
+		"Content-Type": {"application/json"},
+	}
+)
+
 type Opt func(*Client) error
 
 func WithHost(host string) Opt {
